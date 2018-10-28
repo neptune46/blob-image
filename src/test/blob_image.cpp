@@ -37,7 +37,7 @@ void blob_rgb24()
     Mat src_mat, dst_mat;
 
     std::ifstream fsrc;
-    fsrc.open("src.rgb", std::ios::binary);
+    fsrc.open("test_rgb24_300x300.rgb", std::ios::binary);
     fsrc.read(src_buf, size);
     fsrc.close();
     src_mat = Mat(w, h, CV_8UC3, (uchar*)src_buf);

@@ -11,7 +11,7 @@ int main()
     int src_w = 640, src_h = 480, dst_w, dst_h;
     enum AVPixelFormat src_pix_fmt = AV_PIX_FMT_YUYV422, dst_pix_fmt = AV_PIX_FMT_RGB24;
     const char *dst_size = NULL;
-    const char *src_filename = "src.yuv", *dst_filename = "out.rgb";
+    const char *src_filename = "test_yuyv_300x300.yuv", *dst_filename = "out.rgb";
     FILE *src_file = NULL, *dst_file = NULL;
     int src_bufsize = 0, dst_bufsize = 0;
     struct SwsContext *sws_ctx;
