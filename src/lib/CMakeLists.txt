@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
+
+
 
 # scale_image project
 project(libswblob)
@@ -12,3 +14,6 @@ set (FFMPEG_LIBS avutil swscale)
 
 add_library(libswblob SHARED swblob.cpp swblob.h)
 target_link_libraries(libswblob ${FFMPEG_LIBS})
+
+include(GenerateExportHeader)
+generate_export_header(libswblob)

@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-# scale_image project
+# ffscale test app
 project(ffscale)
 
 set (CMAKE_CXX_STANDARD 11)
@@ -14,7 +14,7 @@ set (FFMPEG_LIBS avutil swscale)
 add_executable(ffscale test_ff_scale.cpp)
 target_link_libraries(ffscale ${FFMPEG_LIBS})
 
-# blob_image project
+# cvblob test app
 project(cvblob)
 
 include_directories (cvblob ${CMAKE_CURRENT_SOURCE_DIR}/../../opencv/include)
@@ -23,3 +23,12 @@ set (MY_OPENCV_LIBS opencv_world400d)
 
 add_executable(cvblob test_cv_blob.cpp)
 target_link_libraries( cvblob ${MY_OPENCV_LIBS} )
+
+# swblob test app
+project(testswblob)
+
+include_directories (testswblob ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+link_directories(testswblob ${CMAKE_CURRENT_SOURCE_DIR}/../../build/win/lib/Debug)
+
+add_executable(testswblob test_swblob.cpp)
+target_link_libraries(testswblob libswblob)
