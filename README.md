@@ -1,4 +1,4 @@
-# preproc-image
+# blob-image
 A tiny library for pre-processing image before sending to neural network to training or inference
 
 ## introduction
