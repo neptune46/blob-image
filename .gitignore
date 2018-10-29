@@ -1,2 +1,4 @@
-build
-opencv
+build/*
+opencv/*
+
+!readme.md
