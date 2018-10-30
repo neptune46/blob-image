@@ -27,8 +27,15 @@ target_link_libraries( cvblob ${MY_OPENCV_LIBS} )
 # swblob test app
 project(testswblob)
 
-include_directories (testswblob ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
-link_directories(testswblob ${CMAKE_CURRENT_SOURCE_DIR}/../../build/win/lib/Debug)
+include_directories (testswblob 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../opencv/include)
+
+link_directories(testswblob 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../build/win/lib/Debug
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../opencv/lib)
+
+set (MY_OPENCV_LIBS opencv_world400d)
 
 add_executable(testswblob test_swblob.cpp)
-target_link_libraries(testswblob libswblob)
+target_link_libraries(testswblob libswblob ${MY_OPENCV_LIBS})

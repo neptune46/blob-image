@@ -2,7 +2,14 @@
 #include <fstream>
 #include <string>
 
-int testSwblob()
+#include <opencv2/dnn.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+
+using namespace cv;
+using namespace dnn;
+
+int test_swblob()
 {
     double scale = 1.0;
     BlobImage<char> src(640, 480, IMG_FMT_YUYV);
@@ -21,12 +28,43 @@ int testSwblob()
 
     blobFromImage(&src, &dst, scale, ms, false, false);
 
+    std::ofstream dstfile;
+    dstfile.open("swblob.bin", std::ios::binary);
+    dstfile.write((char*)dst.data[0], dst.linesize[0] * dst.h * sizeof(float));
+    dstfile.close();
+
     return 0;
+}
+
+void test_cvblob()
+{
+    int w = 300, h = 300;
+    int size = w * h * 3;
+    float scale = (float)0.00392; // (1/255)
+    Scalar mean = { 0.0, 0.0, 0.0, 0.0 };
+    char* srcbuf = new char[size];
+    Mat srcMat, dstMat;
+
+    std::ifstream srcfile;
+    srcfile.open("test_rgb24_300x300.rgb", std::ios::binary);
+    srcfile.read(srcbuf, size);
+    srcfile.close();
+    srcMat = Mat(w, h, CV_8UC3, (uchar*)srcbuf);
+
+    blobFromImage(srcMat, dstMat, scale, { w, h }, mean, false, false);
+
+    std::ofstream dstfile;
+    dstfile.open("cvblob.bin", std::ios::binary);
+    dstfile.write((char*)dstMat.data, size * sizeof(float));
+    dstfile.close();
+
+    delete[] srcbuf;
 }
 
 int main()
 {
-    testSwblob();
+    test_swblob();
+    test_cvblob();
 
     return 0;
 }
