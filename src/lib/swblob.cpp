@@ -63,6 +63,10 @@ int blobFromImage(BlobImage<char>* src, BlobImage<float>* dst, double scale, Mea
         goto _finish;
     }
 
+    // convert to destination format
+    sws_scale(swsCtx, (const uint8_t * const*)src->data, src->linesize,
+        0, src->h, (uint8_t * const*)rgbData, rgbLinesize);
+
     normalize(rgbData[0], rgbW, rgbH, scale, ms, dst->data[0]);
 
 _finish:
