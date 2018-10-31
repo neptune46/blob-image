@@ -1,5 +1,7 @@
 #include "swblob.h"
 
+#include <fstream>
+
 extern "C" {
 #include <libavutil/imgutils.h>
 #include <libavutil/parseutils.h>
@@ -24,13 +26,16 @@ inline AVPixelFormat convertFmt(ImageFmt fmt)
 void normalize(uint8_t* src, int w, int h, double scale, MeanScale ms, float* dst)
 {
     int pitch = w * 3;
+    float* r = dst;
+    float* g = dst + w * h;
+    float* b = dst + w * h * 2;
     for (int y=0; y<h; y++) 
     {
         for (int x=0; x<w; x++)
         {
-            dst[y*pitch + x * 3 + 0] = (float)((double)src[y*pitch + x * 3 + 0] - ms.scale[0]) * scale;
-            dst[y*pitch + x * 3 + 1] = (float)((double)src[y*pitch + x * 3 + 1] - ms.scale[1]) * scale;
-            dst[y*pitch + x * 3 + 2] = (float)((double)src[y*pitch + x * 3 + 2] - ms.scale[2]) * scale;
+            *(r++) = (float)((double)src[y*pitch + x * 3 + 0] - ms.scale[0]) * scale;
+            *(g++) = (float)((double)src[y*pitch + x * 3 + 1] - ms.scale[1]) * scale;
+            *(b++) = (float)((double)src[y*pitch + x * 3 + 2] - ms.scale[2]) * scale;
         }
     }
 }
@@ -55,7 +60,7 @@ int blobFromImage(BlobImage<char>* src, BlobImage<float>* dst, double scale, Mea
 
     swsCtx = sws_getContext(src->w, src->h, convertFmt(src->fmt),
         rgbW, rgbH, convertFmt(dst->fmt),
-        SWS_BILINEAR, NULL, NULL, NULL);
+        SWS_BICUBLIN, NULL, NULL, NULL);
     if (!swsCtx) 
     {
         fprintf(stderr, "failed to create software scale context\n");
@@ -72,5 +77,5 @@ int blobFromImage(BlobImage<char>* src, BlobImage<float>* dst, double scale, Mea
 _finish:
     av_freep(&rgbData[0]);
     sws_freeContext(swsCtx);
-    return 0;
+    return ret;
 }

@@ -1,9 +1,11 @@
 
-struct MeanScale{
+struct MeanScale
+{
     double scale[4];
 };
 
-enum ImageFmt {
+enum ImageFmt 
+{
     IMG_FMT_YUYV,
     IMG_FMT_RGB24
 };
@@ -13,7 +15,8 @@ template <typename T> struct BlobImage
     BlobImage(int width, int height, ImageFmt format) :
         w(width), h(height), fmt(format)
     {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) 
+        {
             linesize[i] = 0;
             data[i] = nullptr;
         }
@@ -35,8 +38,10 @@ template <typename T> struct BlobImage
 
     ~BlobImage()
     {
-        for (int i = 0; i < 4; i++) {
-            if (data[i]) {
+        for (int i = 0; i < 4; i++) 
+        {
+            if (data[i]) 
+            {
                 delete[] data[i];
                 data[i] = nullptr;
             }

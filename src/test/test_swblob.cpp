@@ -1,6 +1,7 @@
 # include "swblob.h"
 #include <fstream>
 #include <string>
+#include <iostream>
 
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
@@ -9,12 +10,10 @@
 using namespace cv;
 using namespace dnn;
 
-int test_swblob()
+int test_swblob(BlobImage<char>& src, BlobImage<float>& dst)
 {
-    double scale = 1.0;
-    BlobImage<char> src(640, 480, IMG_FMT_YUYV);
-    BlobImage<float> dst(300, 300, IMG_FMT_RGB24);
-    MeanScale ms = { 0.0, 0.0, 0.0, 0.0 };
+    double scale = 0.00392; // (1/255)
+    MeanScale ms = { 127.0, 127.0, 127.0, 127.0 };
 
     std::ifstream srcfile;
     srcfile.open("test_yuyv_640x480.yuv", std::ios::binary);
@@ -36,14 +35,12 @@ int test_swblob()
     return 0;
 }
 
-void test_cvblob()
+void test_cvblob(Mat& srcMat, Mat& dstMat, int w, int h)
 {
-    int w = 300, h = 300;
     int size = w * h * 3;
     float scale = (float)0.00392; // (1/255)
-    Scalar mean = { 0.0, 0.0, 0.0, 0.0 };
+    Scalar mean = { 127.0, 127.0, 127.0, 127.0 };
     char* srcbuf = new char[size];
-    Mat srcMat, dstMat;
 
     std::ifstream srcfile;
     srcfile.open("test_rgb24_300x300.rgb", std::ios::binary);
@@ -61,10 +58,28 @@ void test_cvblob()
     delete[] srcbuf;
 }
 
+double compare(float* ref, float* cur, int size)
+{
+    double sum = 0.0;
+    for (int i=0; i<size; i++)
+    {
+        sum += abs(*(ref + i) - *(cur + i));
+    }
+    return sum/size;
+}
+
 int main()
 {
-    test_swblob();
-    test_cvblob();
+    int w = 300, h = 300;
+    Mat srcMat, dstMat;
+    test_cvblob(srcMat, dstMat, w, h);
+
+    BlobImage<char> src(640, 480, IMG_FMT_YUYV);
+    BlobImage<float> dst(w, h, IMG_FMT_RGB24);
+    test_swblob(src, dst);
+
+    double error = compare((float*)dstMat.data, dst.data[0], w * h * 3);
+    std::cout << "error = " << error << std::endl;
 
     return 0;
 }
