@@ -1,9 +1,9 @@
 # blob-image
-A tiny library for pre-processing image before sending to neural network to training or inference
+A tiny library for pre-processing image before sending to neural network for training or inference
 
 ## introduction
 
-The pre-processing may includes:
+The pre-processing may include:
 - color space conversion
 - resize
 - mean subtraction
