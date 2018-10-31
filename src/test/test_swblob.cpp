@@ -7,6 +7,10 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "perf_util.h"
+
+PerfUtil puInstance;
+
 using namespace cv;
 using namespace dnn;
 
@@ -25,7 +29,9 @@ int test_swblob(BlobImage<char>& src, BlobImage<float>& dst)
     srcfile.read(src.data[0], src.linesize[0] * src.h);
     srcfile.close();
 
+    puInstance.startTick("swblob");
     blobFromImage(&src, &dst, scale, ms, false, false);
+    puInstance.stopTick("swblob");
 
     std::ofstream dstfile;
     dstfile.open("swblob.bin", std::ios::binary);
@@ -48,7 +54,9 @@ void test_cvblob(Mat& srcMat, Mat& dstMat, int w, int h)
     srcfile.close();
     srcMat = Mat(w, h, CV_8UC3, (uchar*)srcbuf);
 
+    puInstance.startTick("cvblob");
     blobFromImage(srcMat, dstMat, scale, { w, h }, mean, false, false);
+    puInstance.stopTick("cvblob");
 
     std::ofstream dstfile;
     dstfile.open("cvblob.bin", std::ios::binary);
@@ -68,7 +76,7 @@ double compare(float* ref, float* cur, int size)
     return sum/size;
 }
 
-int main()
+void test()
 {
     int w = 300, h = 300;
     Mat srcMat, dstMat;
@@ -80,6 +88,14 @@ int main()
 
     double error = compare((float*)dstMat.data, dst.data[0], w * h * 3);
     std::cout << "error = " << error << std::endl;
+}
+
+int main()
+{
+    for (int i=0; i<10; i++)
+    {
+        test();
+    }
 
     return 0;
 }
