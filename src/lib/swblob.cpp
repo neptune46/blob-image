@@ -42,7 +42,7 @@ void normalize(uint8_t* src, int w, int h, double scale, MeanScale ms, float* ds
 
 int blobFromImage(BlobImage<char>* src, BlobImage<float>* dst, double scale, MeanScale ms, bool swapRB, bool crop)
 {
-    int ret;
+    int ret = 0;
     uint8_t *rgbData[4];
     int rgbLinesize[4];
     int rgbW = dst->w;
