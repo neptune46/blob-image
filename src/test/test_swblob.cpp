@@ -78,7 +78,7 @@ double compare(float* ref, float* cur, int size)
     return sum/size;
 }
 
-void test()
+void test_blob()
 {
     int w = 300, h = 300;
     Mat srcMat, dstMat;
@@ -92,11 +92,28 @@ void test()
     std::cout << "error = " << error << std::endl;
 }
 
+int test_ffdec()
+{
+    VideoDec vdec("test.mp4");
+    ImageBlob<char> img(300, 300, IMG_FMT_RGB24);
+    int frameIdx = 0;
+
+    while (vdec.decode(img) >= 0)
+    {
+        printf("get one frame\n");
+        img.saveBmp(frameIdx++);
+    }
+
+    return 0;
+}
+
 int main()
 {
+    test_ffdec();
+
     for (int i=0; i<10; i++)
     {
-        test();
+        test_blob();
     }
 
     return 0;

@@ -49,9 +49,17 @@ template <typename T> struct ImageBlob
         }
     }
 
+    void saveBmp(int index);
+
     int w;
     int h;
     ImageFmt fmt;
     int linesize[4];
     T* data[4];
 };
+
+template <typename T>
+void ImageBlob<T>::saveBmp(int index)
+{
+
+}

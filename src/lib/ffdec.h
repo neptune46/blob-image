@@ -14,7 +14,7 @@ public:
     VideoDec(const char* videoFileName);
     ~VideoDec();
 
-    int decode();
+    int decode(ImageBlob<char>& img);
 
 private:
     int initialize(enum AVMediaType type);

@@ -125,7 +125,7 @@ int VideoDec::decode_packet(const AVPacket *pkt, int* gotFrame)
     return 0;
 }
 
-int VideoDec::decode()
+int VideoDec::decode(ImageBlob<char>& img)
 {
     int ret = 0;
     AVPacket pkt = { 0 };
