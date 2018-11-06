@@ -85,7 +85,7 @@ int VideoDec::initialize(enum AVMediaType type)
     return 0;
 }
 
-int VideoDec::decode_packet(const AVPacket *pkt, int* gotFrame)
+int VideoDec::decodePacket(const AVPacket *pkt, int* gotFrame)
 {
     int ret = 0;
     *gotFrame = 0;
@@ -115,10 +115,7 @@ int VideoDec::decode_packet(const AVPacket *pkt, int* gotFrame)
     if (ret >= 0)
     {
         frameCount_++;
-
         *gotFrame = 1;
-        //save2file(frame);
-
         av_frame_unref(frame_);
     }
 
@@ -133,10 +130,21 @@ int VideoDec::decode(ImageBlob<char>& img)
 
     if (initialized_ == false)
     {
+        // initialize decode context
         if (initialize(AVMEDIA_TYPE_VIDEO) != 0)
         {
             return -1;
         }
+
+        // initialize sw scale context
+        swsCtx_ = sws_getContext(decodeCtx_->width, decodeCtx_->height, decodeCtx_->pix_fmt,
+            img.w, img.h, AV_PIX_FMT_RGB24, SWS_BICUBLIN, NULL, NULL, NULL);
+        if (!swsCtx_)
+        {
+            fprintf(stderr, "failed to create software scale context\n");
+            return -1;
+        }
+
         initialized_ = true;
     }
 
@@ -146,7 +154,7 @@ int VideoDec::decode(ImageBlob<char>& img)
         {
             if (pkt.stream_index == streamIdx_) 
             {
-                ret = decode_packet(&pkt, &gotFrame);
+                ret = decodePacket(&pkt, &gotFrame);
             }
 
             av_packet_unref(&pkt);
@@ -159,7 +167,7 @@ int VideoDec::decode(ImageBlob<char>& img)
     else
     {
         // flush cached frames
-        ret = decode_packet(NULL, &gotFrame);
+        ret = decodePacket(NULL, &gotFrame);
     }
 
     return ret;
@@ -170,5 +178,7 @@ int VideoDec::destroy()
     avcodec_free_context(&decodeCtx_);
     avformat_close_input(&formatCtx_);
     av_frame_free(&frame_);
+    sws_freeContext(swsCtx_);
+
     return 0;
 }

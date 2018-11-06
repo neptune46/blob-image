@@ -6,6 +6,9 @@
 
 extern "C" {
 #include <libavformat/avformat.h>
+#include <libavutil/imgutils.h>
+#include <libavutil/parseutils.h>
+#include <libswscale/swscale.h>
 }
 
 class VideoDec
@@ -18,17 +21,18 @@ public:
 
 private:
     int initialize(enum AVMediaType type);
-    int decode_packet(const AVPacket *pkt, int* gotFrame);
+    int decodePacket(const AVPacket *pkt, int* gotFrame);
     int destroy();
 
 private:
     std::string fileName_;
-    AVFormatContext *formatCtx_ = NULL;
-    AVCodecContext *decodeCtx_ = NULL;
-    AVStream *videoStream_ = NULL;
+    AVFormatContext *formatCtx_ = nullptr;
+    AVCodecContext *decodeCtx_ = nullptr;
+    AVStream *videoStream_ = nullptr;
     int streamIdx_ = -1;
-    AVFrame *frame_ = NULL;
+    AVFrame *frame_ = nullptr;
     int frameCount_ = 0;
     bool initialized_ = false;
+    struct SwsContext *swsCtx_ = nullptr;
 };
 
