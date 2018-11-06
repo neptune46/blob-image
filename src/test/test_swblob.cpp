@@ -1,4 +1,6 @@
-# include "swblob.h"
+#include "swblob.h"
+#include "ffdec.h"
+
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -14,7 +16,7 @@ PerfUtil puInstance;
 using namespace cv;
 using namespace dnn;
 
-int test_swblob(BlobImage<char>& src, BlobImage<float>& dst)
+int test_swblob(ImageBlob<char>& src, ImageBlob<float>& dst)
 {
     double scale = 0.00392; // (1/255)
     MeanScale ms = { 127.0, 127.0, 127.0, 127.0 };
@@ -82,8 +84,8 @@ void test()
     Mat srcMat, dstMat;
     test_cvblob(srcMat, dstMat, w, h);
 
-    BlobImage<char> src(640, 480, IMG_FMT_YUYV);
-    BlobImage<float> dst(w, h, IMG_FMT_RGB24);
+    ImageBlob<char> src(640, 480, IMG_FMT_YUYV);
+    ImageBlob<float> dst(w, h, IMG_FMT_RGB24);
     test_swblob(src, dst);
 
     double error = compare((float*)dstMat.data, dst.data[0], w * h * 3);

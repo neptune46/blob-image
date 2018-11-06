@@ -1,9 +1,10 @@
 #pragma once
 
+#include "image.h"
+
 #include <string>
 
 extern "C" {
-#include <libavutil/motion_vector.h>
 #include <libavformat/avformat.h>
 }
 
