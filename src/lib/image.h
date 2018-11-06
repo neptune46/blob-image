@@ -11,6 +11,14 @@ enum ImageFmt
     IMG_FMT_RGB24
 };
 
+struct RectMask
+{
+    int left;
+    int top;
+    int right;
+    int bottom;
+};
+
 template <typename T> struct ImageBlob 
 {
     ImageBlob(int width, int height, ImageFmt format) :
@@ -49,6 +57,7 @@ template <typename T> struct ImageBlob
         }
     }
 
+    void drawMask(RectMask* r);
     void saveBmp(int index);
 
     int w;
@@ -57,6 +66,12 @@ template <typename T> struct ImageBlob
     int linesize[4];
     T* data[4];
 };
+
+template <typename T>
+void ImageBlob<T>::drawMask(RectMask* r)
+{
+
+}
 
 template <typename T>
 void ImageBlob<T>::saveBmp(int index)
