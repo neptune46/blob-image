@@ -21,18 +21,18 @@ public:
 
 private:
     int initialize(enum AVMediaType type);
-    int decodePacket(const AVPacket *pkt, int* gotFrame);
+    int decodePacket(const AVPacket *pkt, ImageBlob<char>& img, int& gotFrame);
     int destroy();
 
 private:
     std::string fileName_;
     AVFormatContext *formatCtx_ = nullptr;
     AVCodecContext *decodeCtx_ = nullptr;
+    struct SwsContext *swsCtx_ = nullptr;
     AVStream *videoStream_ = nullptr;
     int streamIdx_ = -1;
     AVFrame *frame_ = nullptr;
     int frameCount_ = 0;
     bool initialized_ = false;
-    struct SwsContext *swsCtx_ = nullptr;
 };
 

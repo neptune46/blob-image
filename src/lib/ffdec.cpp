@@ -85,10 +85,10 @@ int VideoDec::initialize(enum AVMediaType type)
     return 0;
 }
 
-int VideoDec::decodePacket(const AVPacket *pkt, int* gotFrame)
+int VideoDec::decodePacket(const AVPacket *pkt, ImageBlob<char>& img, int& gotFrame)
 {
     int ret = 0;
-    *gotFrame = 0;
+    gotFrame = 0;
 
     ret = avcodec_send_packet(decodeCtx_, pkt);
     if (ret < 0 && pkt != NULL)
@@ -114,8 +114,11 @@ int VideoDec::decodePacket(const AVPacket *pkt, int* gotFrame)
 
     if (ret >= 0)
     {
+        sws_scale(swsCtx_, (const uint8_t * const*)frame_->data, frame_->linesize,
+            0, frame_->height, (uint8_t * const*)img.data, img.linesize);
+
         frameCount_++;
-        *gotFrame = 1;
+        gotFrame = 1;
         av_frame_unref(frame_);
     }
 
@@ -154,7 +157,7 @@ int VideoDec::decode(ImageBlob<char>& img)
         {
             if (pkt.stream_index == streamIdx_) 
             {
-                ret = decodePacket(&pkt, &gotFrame);
+                ret = decodePacket(&pkt, img, gotFrame);
             }
 
             av_packet_unref(&pkt);
@@ -167,7 +170,7 @@ int VideoDec::decode(ImageBlob<char>& img)
     else
     {
         // flush cached frames
-        ret = decodePacket(NULL, &gotFrame);
+        ret = decodePacket(NULL, img, gotFrame);
     }
 
     return ret;

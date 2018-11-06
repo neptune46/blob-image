@@ -45,6 +45,11 @@ add_custom_command(TARGET testswblob POST_BUILD
 
 add_custom_command(TARGET testswblob POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/bin/swresample-3.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../build/win/test/Debug/swresample-3.dll")
+
+add_custom_command(TARGET testswblob POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_CURRENT_SOURCE_DIR}/../../data/test_rgb24_300x300.rgb"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../build/win/test/Debug/test_rgb24_300x300.rgb")
 
