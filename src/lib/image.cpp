@@ -24,13 +24,12 @@ typedef struct
     unsigned int   biClrImportant;   /* Number of important colors */
 } BmpInfoHeader;
 
-typedef struct BmpPixel
+typedef struct 
 {
     char r;
     char g;
     char b;
-    char alpha;
-};
+} BmpPixel;
 
 void rgb2bmp(int w, int h, char* data, char* filename)
 {
@@ -61,20 +60,19 @@ void rgb2bmp(int w, int h, char* data, char* filename)
     fout.write((const char*)&bfh, sizeof(bfh));
     fout.write((const char*)&bih, sizeof(bih));
 
-    int i = 0;
-    BmpPixel* bmpBuf = new BmpPixel[w*h];
+    int line = 0; 
+    char* bmpBuf = new char[w * h * 3]; 
     for (int y = bih.biHeight - 1; y >= 0; y--) 
     {
         for (int x = 0; x < bih.biWidth; x++) 
         {
-            bmpBuf[i].r = data[y * w * 3 + h + 0];
-            bmpBuf[i].g = data[y * w * 3 + h + 1];
-            bmpBuf[i].b = data[y * w * 3 + h + 2];
-            bmpBuf[i].alpha = 0;
-            i++;
+            bmpBuf[line * w * 3 + x*3 + 0] = data[y * w * 3 + x*3 + 2];
+            bmpBuf[line * w * 3 + x*3 + 1] = data[y * w * 3 + x*3 + 1];
+            bmpBuf[line * w * 3 + x*3 + 2] = data[y * w * 3 + x*3 + 0];
         }
+        line++;
     }
-    fout.write((const char*)bmpBuf, w*h*sizeof(BmpPixel));
+    fout.write((const char*)bmpBuf, w*h*3);
     delete[] bmpBuf;
     fout.close();
 }
