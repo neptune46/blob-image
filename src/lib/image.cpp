@@ -29,7 +29,7 @@ typedef struct
     char r;
     char g;
     char b;
-} BmpPixel;
+} RgbColor;
 
 void rgb2bmp(int w, int h, char* data, char* filename)
 {
@@ -76,3 +76,28 @@ void rgb2bmp(int w, int h, char* data, char* filename)
     delete[] bmpBuf;
     fout.close();
 }
+
+void drawOutLine(char* buf, int w, int h, int left, int top, int right, int bottom)
+{
+    RgbColor lineColor = {(char)10, (char)15, (char)20};
+    int stride = w * 3;
+    for (int x=left; x<right; x++)
+    {
+        buf[top * stride + x * 3 + 0] = lineColor.r;
+        buf[top * stride + x * 3 + 1] = lineColor.g;
+        buf[top * stride + x * 3 + 2] = lineColor.b;
+        buf[bottom * stride + x * 3 + 0] = lineColor.r;
+        buf[bottom * stride + x * 3 + 1] = lineColor.g;
+        buf[bottom * stride + x * 3 + 2] = lineColor.b;
+    }
+    for (int y = top; y < bottom; y++)
+    {
+        buf[y * stride + left * 3 + 0] = lineColor.r;
+        buf[y * stride + left * 3 + 1] = lineColor.g;
+        buf[y * stride + left * 3 + 2] = lineColor.b;
+        buf[y * stride + right * 3 + 0] = lineColor.r;
+        buf[y * stride + right * 3 + 1] = lineColor.g;
+        buf[y * stride + right * 3 + 2] = lineColor.b;
+    }
+}
+

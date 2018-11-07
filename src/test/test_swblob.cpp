@@ -11,7 +11,7 @@
 
 #include "perf_util.h"
 
-PerfUtil puInstance;
+PerfUtil perftool;
 
 using namespace cv;
 using namespace dnn;
@@ -31,9 +31,9 @@ int test_swblob(ImageBlob<char>& src, ImageBlob<float>& dst)
     srcfile.read(src.data[0], src.linesize[0] * src.h);
     srcfile.close();
 
-    puInstance.startTick("swblob");
+    perftool.startTick("swblob");
     blobFromImage(&src, &dst, scale, ms, false, false);
-    puInstance.stopTick("swblob");
+    perftool.stopTick("swblob");
 
     std::ofstream dstfile;
     dstfile.open("swblob.bin", std::ios::binary);
@@ -56,9 +56,9 @@ void test_cvblob(Mat& srcMat, Mat& dstMat, int w, int h)
     srcfile.close();
     srcMat = Mat(w, h, CV_8UC3, (uchar*)srcbuf);
 
-    puInstance.startTick("cvblob");
+    perftool.startTick("cvblob");
     blobFromImage(srcMat, dstMat, scale, { w, h }, mean, false, false);
-    puInstance.stopTick("cvblob");
+    perftool.stopTick("cvblob");
 
     std::ofstream dstfile;
     dstfile.open("cvblob.bin", std::ios::binary);
@@ -94,13 +94,29 @@ void test_blob()
 
 int test_ffdec()
 {
+    int ret = 0;
     VideoDec vdec("test.mp4");
     ImageBlob<char> img(300, 300, IMG_FMT_RGB24);
     int frameIdx = 0;
 
-    while (vdec.decode(img) >= 0)
+    while (1)
     {
+        perftool.startTick("decode");
+        ret = vdec.decode(img);
+        perftool.stopTick("decode");
+
+        if (ret < 0)
+        {
+            break;
+        }
+
         printf("get one frame\n");
+
+        // do deep learning inference
+
+        RectMask rect = { 40, 30, 160, 140 };
+        img.drawMask(&rect);
+
         img.saveBmp(frameIdx++);
     }
 
