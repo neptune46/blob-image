@@ -77,7 +77,7 @@ void rgb2bmp(int w, int h, char* data, char* filename)
     fout.close();
 }
 
-void drawOutLine(char* buf, int w, int h, int left, int top, int right, int bottom)
+void drawOutline(char* buf, int w, int h, int left, int top, int right, int bottom)
 {
     RgbColor lineColor = {(char)10, (char)15, (char)20};
     int stride = w * 3;

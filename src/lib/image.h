@@ -20,7 +20,7 @@ struct RectMask
 };
 
 void rgb2bmp(int w, int h, char* data, char* filename);
-void drawOutLine(char* buf, int w, int h, int left, int top, int right, int bottom);
+void drawOutline(char* buf, int w, int h, int left, int top, int right, int bottom);
 
 template <typename T> struct ImageBlob 
 {
@@ -73,9 +73,9 @@ template <typename T> struct ImageBlob
 template <typename T>
 void ImageBlob<T>::drawMask(RectMask* r)
 {
-    drawOutLine((char*)data[0], w, h, r->left-1, r->top-1, r->right+1, r->bottom+1);
-    drawOutLine((char*)data[0], w, h, r->left,   r->top,   r->right,   r->bottom);
-    drawOutLine((char*)data[0], w, h, r->left+1, r->top+1, r->right-1, r->bottom-1);
+    drawOutline((char*)data[0], w, h, r->left-1, r->top-1, r->right+1, r->bottom+1);
+    drawOutline((char*)data[0], w, h, r->left,   r->top,   r->right,   r->bottom);
+    drawOutline((char*)data[0], w, h, r->left+1, r->top+1, r->right-1, r->bottom-1);
 }
 
 template <typename T>
