@@ -33,49 +33,59 @@ void normalize(uint8_t* src, int w, int h, double scale, MeanScale ms, float* ds
     {
         for (int x=0; x<w; x++)
         {
-            *(r++) = (float)((double)src[y*pitch + x * 3 + 0] - ms.scale[0]) * scale;
-            *(g++) = (float)((double)src[y*pitch + x * 3 + 1] - ms.scale[1]) * scale;
-            *(b++) = (float)((double)src[y*pitch + x * 3 + 2] - ms.scale[2]) * scale;
+            *(r++) = (float)(((double)src[y*pitch + x * 3 + 0] - ms.scale[0]) * scale);
+            *(g++) = (float)(((double)src[y*pitch + x * 3 + 1] - ms.scale[1]) * scale);
+            *(b++) = (float)(((double)src[y*pitch + x * 3 + 2] - ms.scale[2]) * scale);
         }
     }
 }
 
+
 int blobFromImage(ImageBlob<char>* src, ImageBlob<float>* dst, double scale, MeanScale ms, bool swapRB, bool crop)
 {
     int ret = 0;
-    uint8_t *rgbData[4];
-    int rgbLinesize[4];
-    int rgbW = dst->w;
-    int rgbH = dst->h;
-    int rgbBufsize = 0;
-    struct SwsContext *swsCtx;
 
-    if ((rgbBufsize = av_image_alloc(rgbData, rgbLinesize,
-        rgbW, rgbH, convertFmt(dst->fmt), 1)) < 0) 
+    if (src->fmt == IMG_FMT_RGB24)
     {
-        fprintf(stderr, "failed to allocate rgb surface\n");
-        ret = -1;
-        goto _finish;
-    }
-
-    swsCtx = sws_getContext(src->w, src->h, convertFmt(src->fmt),
-        rgbW, rgbH, convertFmt(dst->fmt),
-        SWS_BICUBLIN, NULL, NULL, NULL);
-    if (!swsCtx) 
+        normalize((uint8_t*)src->data[0], src->w, src->h, scale, ms, dst->data[0]);
+        return ret;
+    } 
+    else
     {
-        fprintf(stderr, "failed to create software scale context\n");
-        ret = -1;
-        goto _finish;
-    }
+        uint8_t *rgbData[4];
+        int rgbLinesize[4];
+        int rgbW = dst->w;
+        int rgbH = dst->h;
+        int rgbBufsize = 0;
+        struct SwsContext *swsCtx;
 
-    // convert to destination format
-    sws_scale(swsCtx, (const uint8_t * const*)src->data, src->linesize,
-        0, src->h, (uint8_t * const*)rgbData, rgbLinesize);
+        if ((rgbBufsize = av_image_alloc(rgbData, rgbLinesize,
+            rgbW, rgbH, convertFmt(dst->fmt), 1)) < 0)
+        {
+            fprintf(stderr, "failed to allocate rgb surface\n");
+            ret = -1;
+            goto _finish;
+        }
 
-    normalize(rgbData[0], rgbW, rgbH, scale, ms, dst->data[0]);
+        swsCtx = sws_getContext(src->w, src->h, convertFmt(src->fmt),
+            rgbW, rgbH, convertFmt(dst->fmt),
+            SWS_BICUBLIN, NULL, NULL, NULL);
+        if (!swsCtx)
+        {
+            fprintf(stderr, "failed to create software scale context\n");
+            ret = -1;
+            goto _finish;
+        }
+
+        // convert to destination format
+        sws_scale(swsCtx, (const uint8_t * const*)src->data, src->linesize,
+            0, src->h, (uint8_t * const*)rgbData, rgbLinesize);
+
+        normalize(rgbData[0], rgbW, rgbH, scale, ms, dst->data[0]);
 
 _finish:
-    av_freep(&rgbData[0]);
-    sws_freeContext(swsCtx);
-    return ret;
+        av_freep(&rgbData[0]);
+        sws_freeContext(swsCtx);
+        return ret;
+    }
 }

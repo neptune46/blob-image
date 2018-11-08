@@ -97,6 +97,9 @@ int test_ffdec()
     int ret = 0;
     VideoDec vdec("test.mp4");
     ImageBlob<char> img(300, 300, IMG_FMT_RGB24);
+    ImageBlob<float> dst(300, 300, IMG_FMT_RGB24);
+    double scale = 0.00392; // (1/255)
+    MeanScale ms = { 127.0, 127.0, 127.0, 127.0 };
     int frameIdx = 0;
 
     while (1)
@@ -106,17 +109,18 @@ int test_ffdec()
         perftool.stopTick("decode");
 
         if (ret < 0)
-        {
             break;
-        }
 
-        printf("get one frame\n");
+        printf("decode frame %04d\n", frameIdx);
+
+        perftool.startTick("blob-rgb");
+        blobFromImage(&img, &dst, scale, ms, false, false);
+        perftool.stopTick("blob-rgb");
 
         // do deep learning inference
 
         RectMask rect = { 40, 30, 160, 140 };
         img.drawMask(&rect);
-
         img.saveBmp(frameIdx++);
     }
 
