@@ -31,6 +31,11 @@ typedef struct
     char b;
 } RgbColor;
 
+inline int clamp(int val, int min, int max)
+{
+    return (val < min) ? min : ((val > max) ? max : val);
+}
+
 void rgb2bmp(int w, int h, char* data, char* filename)
 {
     BmpFileHeader bfh = {};
@@ -81,6 +86,12 @@ void drawOutline(char* buf, int w, int h, int left, int top, int right, int bott
 {
     RgbColor lineColor = {(char)10, (char)15, (char)20};
     int stride = w * 3;
+
+    left = clamp(left, 0, w - 1);
+    top = clamp(top, 0, h - 1);
+    right = clamp(right, 0, w - 1);
+    bottom = clamp(bottom, 0, h - 1);
+
     for (int x=left; x<right; x++)
     {
         buf[top * stride + x * 3 + 0] = lineColor.r;
