@@ -1,4 +1,5 @@
 #pragma once
+#include <stdio.h>
 
 struct MeanScale
 {
@@ -82,6 +83,6 @@ template <typename T>
 void ImageBlob<T>::saveBmp(int index)
 {
     char filename[256] = {};
-    sprintf_s(filename, 256, "out_%04d.bmp", index);
+    sprintf(filename, "out_%04d.bmp", index);
     rgb2bmp(w, h, (char*)data[0], filename);
 }
