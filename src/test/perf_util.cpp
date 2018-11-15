@@ -1,5 +1,7 @@
 
+#ifdef WIN32
 #include <windows.h>
+#endif
 #include "perf_util.h"
 
 PerfUtil::PerfUtil()
@@ -23,12 +25,20 @@ PerfUtil::~PerfUtil()
 void PerfUtil::startTick(std::string tag)
 {
     Tick newTick = {};
-    LARGE_INTEGER li;
 
+#ifdef WIN32
+    LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     newTick.start = li.QuadPart;
     QueryPerformanceFrequency(&li);
     newTick.freq = (double)li.QuadPart / 1000;
+#endif
+
+#ifdef LINUX
+    struct timespec ts = {};
+    clock_gettime(CLOCK_REALTIME, &ts);
+    newTick.start = int(ts.tv_sec * 1000000) + int(ts.tv_nsec / 1000);
+#endif
 
     std::vector<Tick> *perf = nullptr;
     std::map<std::string, std::vector<Tick>*>::iterator it;
@@ -54,11 +64,19 @@ void PerfUtil::stopTick(std::string tag)
         return;
     }
 
+#ifdef WIN32
     LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     it->second->back().stop = li.QuadPart;
     it->second->back().time = 
         double(it->second->back().stop - it->second->back().start) / it->second->back().freq;
+#endif
+
+#ifdef UNIX
+    clock_gettime(CLOCK_REALTIME, &ts);
+    it->second->back().stop = int(ts.tv_sec * 1000000) + int(ts.tv_nsec / 1000);
+    it->second->back().time = double(it->second->back().stop - it->second->back().start) / 1000.0;
+#endif
 }
 
 void PerfUtil::savePerfData()

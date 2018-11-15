@@ -15,7 +15,7 @@ if (UNIX)
     link_directories(swblob ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/bin/linux)
 endif (UNIX)
 
-set (FFMPEG_LIBS avutil swscale avcodec avformat)
+set (FFMPEG_LIBS swresample avutil swscale avcodec avformat)
 
 add_library(swblob SHARED swblob.cpp swblob.h ffdec.cpp ffdec.h image.cpp image.h)
 target_link_libraries(swblob ${FFMPEG_LIBS})
