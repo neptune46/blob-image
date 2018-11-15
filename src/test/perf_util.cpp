@@ -1,6 +1,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#else
+
 #endif
 #include "perf_util.h"
 
@@ -32,9 +34,7 @@ void PerfUtil::startTick(std::string tag)
     newTick.start = li.QuadPart;
     QueryPerformanceFrequency(&li);
     newTick.freq = (double)li.QuadPart / 1000;
-#endif
-
-#ifdef LINUX
+#else
     struct timespec ts = {};
     clock_gettime(CLOCK_REALTIME, &ts);
     newTick.start = int(ts.tv_sec * 1000000) + int(ts.tv_nsec / 1000);
@@ -70,9 +70,8 @@ void PerfUtil::stopTick(std::string tag)
     it->second->back().stop = li.QuadPart;
     it->second->back().time = 
         double(it->second->back().stop - it->second->back().start) / it->second->back().freq;
-#endif
-
-#ifdef UNIX
+#else
+    struct timespec ts = {};
     clock_gettime(CLOCK_REALTIME, &ts);
     it->second->back().stop = int(ts.tv_sec * 1000000) + int(ts.tv_nsec / 1000);
     it->second->back().time = double(it->second->back().stop - it->second->back().start) / 1000.0;
