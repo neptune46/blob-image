@@ -4,6 +4,7 @@ A tiny library for pre-processing image before sending to neural network for tra
 ## introduction
 
 The pre-processing may include:
+- decode
 - color space conversion
 - resize
 - mean subtraction
