@@ -24,5 +24,5 @@ link_directories(testswblob
     ${CMAKE_CURRENT_SOURCE_DIR}/../../opencv/lib
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/lib)
 
-add_executable(testswblob test_swblob.cpp perf_util.h perf_util.cpp)
+add_executable(testswblob test_swblob.cpp)
 target_link_libraries(testswblob swblob ${OPENCV_LIB})

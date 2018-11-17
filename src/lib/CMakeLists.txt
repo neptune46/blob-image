@@ -17,7 +17,7 @@ endif (UNIX)
 
 set (FFMPEG_LIBS swresample avutil swscale avcodec avformat)
 
-add_library(swblob SHARED swblob.cpp swblob.h ffdec.cpp ffdec.h image.cpp image.h)
+add_library(swblob SHARED swblob.cpp swblob.h ffdec.cpp ffdec.h image.cpp image.h perf_util.h perf_util.cpp)
 target_link_libraries(swblob ${FFMPEG_LIBS})
 
 include(GenerateExportHeader)
